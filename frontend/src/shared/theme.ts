@@ -1,66 +1,58 @@
-// Light/dark theme + Material Dynamic palette seed. Wired in once per
-// page from `bundle.ts`'s start() hook, before any page-specific
-// init — so when a page renders it already has the right `body.dark`
-// class and the M3 palette resolved against the seed color.
+// Mode-preference cycle (auto / light / dark) wired to every
+// `[data-theme-toggle]` button. Layout sets `<html data-theme="stackific"
+// data-mode="auto">`; md3's runtime owns the actual mode swap, the
+// `md3:mode` localStorage persistence, and the auto→system resolution via
+// CSS @media (prefers-color-scheme). All this module does is cycle the
+// user's preference through ui("mode", ...) and keep the toggle's icon in
+// sync with whichever stage of the cycle we're at.
 //
-// Behaviour:
-//   - Seed the dynamic palette with a fixed color (THEME.seedColor)
-//     so the M3 tokens (primary, secondary, tertiary, error, surface
-//     variants) resolve identically across pages.
-//   - Pick the initial mode in this order: explicit user choice
-//     persisted to localStorage > OS `prefers-color-scheme` > light.
-//     Persisting a user override means a manual toggle wins forever
-//     until the user toggles back; OS preference only matters on a
-//     never-toggled session.
-//   - Mirror the current mode onto every `[data-theme-toggle]` button's
-//     icon (sun on dark, moon on light) so the button always shows
-//     what the click WILL do, not what's currently active. The mobile
-//     drawer and desktop rail each render their own toggle button —
-//     both are picked up by the same `[data-theme-toggle]` query.
+// Pattern mirrored from md3's demo (demo/src/shared/domain.ts modeIcon +
+// updateMode) so the icon vocabulary matches what the framework's own
+// reference UI uses: auto → brightness_auto, light → light_mode,
+// dark → dark_mode.
 
-import ui from "beercss";
-import { THEME } from "../constants";
+type ModePref = "auto" | "light" | "dark";
 
-const { seedColor: SEED_COLOR, storageKey: THEME_KEY } = THEME;
+const MODE_CYCLE: readonly ModePref[] = ["auto", "light", "dark"] as const;
 
-// syncThemeIcons keeps every theme-toggle button visually consistent
-// with the current mode. Called from both the initial-load path and
-// the click handler, so a manual toggle and a page navigation render
-// the same icon for the same mode.
+// md3 registers `ui()` on `window` as a side effect of `import
+// "@stackific/md3"` in bundle.ts. The published dist has no module
+// exports, so we read the global rather than importing the function.
+const ui = window.ui;
+
+function currentMode(): ModePref {
+  const v = ui("mode") as string | undefined;
+  return v === "light" || v === "dark" || v === "auto" ? v : "auto";
+}
+
+function modeIcon(pref: ModePref): string {
+  switch (pref) {
+    case "light":
+      return "light_mode";
+    case "dark":
+      return "dark_mode";
+    default:
+      return "brightness_auto";
+  }
+}
+
 function syncThemeIcons(): void {
-  const isDark = document.body.classList.contains("dark");
-  const icon = isDark ? "light_mode" : "dark_mode";
+  const icon = modeIcon(currentMode());
   for (const el of document.querySelectorAll("[data-theme-toggle] i")) {
     el.textContent = icon;
   }
 }
 
-// toggleTheme flips the mode, persists the new choice, then resyncs
-// the icons. `ui("mode", ...)` is BeerCSS's mode-switch API — it adds
-// or removes `body.dark` and re-evaluates the palette in one call.
-function toggleTheme(): void {
-  const isDark = document.body.classList.contains("dark");
-  const next = isDark ? "light" : "dark";
+function cycleMode(): void {
+  const current = currentMode();
+  const next = MODE_CYCLE[(MODE_CYCLE.indexOf(current) + 1) % MODE_CYCLE.length];
   ui("mode", next);
-  localStorage.setItem(THEME_KEY, next);
   syncThemeIcons();
 }
 
-// initTheme runs once per page. Order matters: seed the palette first
-// (so any subsequent `ui("mode", ...)` has tokens to flip against),
-// then apply the resolved mode, then bind click handlers.
 export function initTheme(): void {
-  ui("theme", SEED_COLOR);
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === "light" || saved === "dark") {
-    ui("mode", saved);
-  } else {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    ui("mode", prefersDark ? "dark" : "light");
-  }
   syncThemeIcons();
-
   for (const btn of document.querySelectorAll("[data-theme-toggle]")) {
-    btn.addEventListener("click", toggleTheme);
+    btn.addEventListener("click", cycleMode);
   }
 }

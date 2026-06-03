@@ -14,7 +14,7 @@ tasks:
     desc: Install git hooks and frontend dependencies
     cmds:
       - lefthook install
-      - test ! -d frontend || (cd frontend && npm install)
+      - test ! -d frontend || (cd frontend && pnpm install)
 
   # ---------- Quality (delegated to lefthook) ----------
 
@@ -131,28 +131,28 @@ tasks:
     desc: Run the Vite dev server
     dir: frontend
     cmds:
-      - npm run dev
+      - pnpm dev
 
   frontend:build:
     desc: Build the frontend for production (single bundle.js + bundle.css)
     dir: frontend
     cmds:
-      - npm run build
+      - pnpm build
 
   frontend:check:
     desc: Frontend typecheck + Biome lint + Knip dead-code
     dir: frontend
     cmds:
-      - npm run check
+      - pnpm check
 
   frontend:lint:fix:
     desc: Run Biome lint with auto-fix on the frontend
     dir: frontend
     cmds:
-      - npm run lint:fix
+      - pnpm lint:fix
 
   frontend:fmt:
     desc: Format frontend code with Biome
     dir: frontend
     cmds:
-      - npm run fmt
+      - pnpm fmt

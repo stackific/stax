@@ -604,16 +604,16 @@ if ($env:FORCE_FRONTEND_BUILD -eq '1' -or -not (Test-Path -LiteralPath $frontend
   Push-Location (Join-Path $RepoRoot 'frontend')
   try {
     if (-not (Test-Path -LiteralPath 'node_modules' -PathType Container)) {
-      & npm ci
-      if ($LASTEXITCODE -ne 0) { throw "npm ci failed with exit code $LASTEXITCODE" }
+      & pnpm install --frozen-lockfile
+      if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
     }
-    & npm run build
-    if ($LASTEXITCODE -ne 0) { throw "npm run build failed with exit code $LASTEXITCODE" }
+    & pnpm build
+    if ($LASTEXITCODE -ne 0) { throw "pnpm build failed with exit code $LASTEXITCODE" }
   } finally {
     Pop-Location
   }
   if (-not (Test-Path -LiteralPath $frontendDist -PathType Container)) {
-    throw "expected frontend/dist after npm run build, not found at $frontendDist"
+    throw "expected frontend/dist after pnpm build, not found at $frontendDist"
   }
 } else {
   Write-Host 'frontend/dist already present (skipping build; set $env:FORCE_FRONTEND_BUILD=1 to override).'

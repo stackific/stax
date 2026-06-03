@@ -33,19 +33,22 @@ jobs:
       # dist tree happened to be checked in (likely stale or empty,
       # depending on .gitignore), and the web UI on bare `stax` would
       # 404 in the wild even though local builds worked.
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build frontend (produces frontend/dist for the Go embed)
         working-directory: frontend
-        run: npm run build
+        run: pnpm build
 
       - name: Validate version format
         run: |

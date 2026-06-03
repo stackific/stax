@@ -3,8 +3,14 @@
     <i aria-hidden="true">menu</i>
   </button>
   <div class="max"></div>
-  <button class="circle border" data-theme-toggle aria-label="Toggle dark mode">
-    <i aria-hidden="true">dark_mode</i>
+  <div class="theme-picker-anchor">
+    <button class="circle border" data-ui="#theme-picker-mobile" aria-label="Pick theme">
+      <i aria-hidden="true">style</i>
+    </button>
+    <menu id="theme-picker-mobile" class="no-wrap left" data-theme-picker></menu>
+  </div>
+  <button class="circle border" data-theme-toggle aria-label="Cycle theme (auto, light, dark)">
+    <i aria-hidden="true">brightness_auto</i>
   </button>
 </nav>
 

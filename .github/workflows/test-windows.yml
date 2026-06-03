@@ -87,22 +87,30 @@ jobs:
       # `task build` depends on `task frontend:build` (per Taskfile.yml)
       # so the //go:embed all:frontend/dist directive resolves against a
       # fresh dist tree. The golang:1.26-bookworm container ships Go but
-      # not Node — install it explicitly here so `npm ci && npm run
-      # build` succeeds before the cross-compile loop runs.
-      - name: install node
+      # not Node — install it explicitly here so `pnpm install &&
+      # pnpm build` succeeds before the cross-compile loop runs.
+      # Corepack ships with Node ≥ 16.10 and uses the `packageManager`
+      # field in frontend/package.json to pick the pinned pnpm version
+      # without a separate install action.
+      - name: install node + pnpm via corepack
         run: |
           set -x
           curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
           apt-get install -y nodejs
           node --version
-          npm --version
+          corepack enable
+          # `--activate` needs a project to read the `packageManager`
+          # field from; run it from frontend/ where the pin lives.
+          (cd frontend && corepack prepare --activate)
+          pnpm --version
 
-      # `task build` -> `task frontend:build` -> `npm run build` needs vite
-      # on PATH, which only exists after `npm ci` populates frontend/node_modules.
-      # The Taskfile's frontend:build does not install deps, so we install them here.
+      # `task build` -> `task frontend:build` -> `pnpm build` needs vite
+      # on PATH, which only exists after `pnpm install` populates
+      # frontend/node_modules. The Taskfile's frontend:build does not
+      # install deps, so we install them here.
       - name: install frontend deps
         working-directory: frontend
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: task build
         run: |
@@ -225,24 +233,27 @@ jobs:
       # workspace doesn't survive the artifact handoff. Mirror what the
       # test.yml workflow does so the in-harness rebuild resolves the embed.
       #
-      # Skipping `task frontend:build` and going straight to `npm run build`
+      # Skipping `task frontend:build` and going straight to `pnpm build`
       # because the taskfile.dev installer drops `task.exe` at a mingw-style
       # path (e.g. /c/Users/runneradmin/bin) that does not resolve on
-      # PowerShell's PATH, and `task frontend:build` is literally `npm run
+      # PowerShell's PATH, and `task frontend:build` is literally `pnpm
       # build` in `frontend/` anyway.
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: install frontend deps
         working-directory: frontend
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: build frontend (produces frontend/dist for the in-harness go build)
         working-directory: frontend
-        run: npm run build
+        run: pnpm build
 
       - name: run e2e suite
         run: |

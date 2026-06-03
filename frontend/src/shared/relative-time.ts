@@ -59,7 +59,7 @@ function pluralize(noun: string, n: number): string {
 }
 
 // applyRelativeTime stamps the fuzzy `relativeTime(iso)` string into
-// `el` and adds a BeerCSS tooltip with the unambiguous absolute
+// `el` and adds an md3 tooltip with the unambiguous absolute
 // timestamp underneath. Wraps the two-step (text + cloned template)
 // pattern in one call so every list/detail view renders its created
 // dates uniformly — same fuzzy primary, same absolute on hover, same
