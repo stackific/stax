@@ -34,6 +34,8 @@ jobs:
       # depending on .gitignore), and the web UI on bare `stax` would
       # 404 in the wild even though local builds worked.
       - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

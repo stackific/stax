@@ -99,7 +99,9 @@ jobs:
           apt-get install -y nodejs
           node --version
           corepack enable
-          corepack prepare --activate
+          # `--activate` needs a project to read the `packageManager`
+          # field from; run it from frontend/ where the pin lives.
+          (cd frontend && corepack prepare --activate)
           pnpm --version
 
       # `task build` -> `task frontend:build` -> `pnpm build` needs vite
@@ -237,6 +239,8 @@ jobs:
       # PowerShell's PATH, and `task frontend:build` is literally `pnpm
       # build` in `frontend/` anyway.
       - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
