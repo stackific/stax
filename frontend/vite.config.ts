@@ -37,16 +37,16 @@ const renameBundle = (): PluginOption => ({
   },
 });
 
-// BeerCSS ships @font-face declarations for four Material Symbols variants
-// (Outlined, Rounded, Sharp, Subset). Only Outlined is ever rendered — it's
-// the `--font-icon` default and the only family the `i` selector resolves
-// to — so the other three woff2 files Vite emits (~1.4 MB total) are
-// downloaded by Vite into dist/assets/ but never fetched by a browser at
-// runtime. This plugin removes them: strip the dead @font-face blocks from
-// bundle.css so the CDN fallback URLs aren't left referencing a missing
-// file, then delete the orphan woff2 files from dist/assets/. Build-only.
-const dropUnusedSymbolFonts = (): PluginOption => ({
-  name: "stax-drop-unused-symbol-fonts",
+// md3 ships @font-face declarations for four Material Symbols variants
+// (Outlined, Rounded, Sharp, Subset) and references them with relative
+// `url(./assets/material-symbols-*.woff2)` paths that Vite resolves and
+// emits into `dist/assets/`. Only Outlined is ever rendered — it's the
+// `--font-icon` default and the only family the `i` selector resolves to —
+// so the three other woff2 files are dead weight (~1.4 MB combined). This
+// plugin strips the dead @font-face blocks from bundle.css and deletes
+// the orphan woff2 files Vite emitted to dist/assets/. Build-only.
+const md3SymbolFonts = (): PluginOption => ({
+  name: "stax-md3-symbol-fonts",
   apply: "build",
   closeBundle() {
     const dist = resolve(root, "dist");
@@ -107,7 +107,7 @@ export default defineConfig({
       partialDirectory: resolve(root, "partials"),
     }),
     renameBundle(),
-    dropUnusedSymbolFonts(),
+    md3SymbolFonts(),
   ],
   server: {
     proxy: {

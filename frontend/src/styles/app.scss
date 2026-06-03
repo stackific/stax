@@ -1,8 +1,8 @@
 // =================================================================
 // @stackific/web-template — Project-level styles
 // =================================================================
-// BeerCSS handles typography, spacing, grid, and components.
-// This file only adds what BeerCSS does not provide.
+// md3 handles typography, spacing, grid, and components.
+// This file only adds what md3 does not provide.
 // =================================================================
 
 @use "sass:list";
@@ -45,12 +45,12 @@ $dirs: (
   #{map.get($dirs, $dir)}: var(--space-#{$size}) !important;
 }
 
-// Zero out padding + margin to neutralise BeerCSS list defaults.
+// Zero out padding + margin to neutralise md3 list defaults.
 // Call with no args for all sides, or pass sides (e.g. `left`, `top`).
 // Uses *physical* properties (padding-left, margin-left) on purpose:
-// BeerCSS sets bullet indent via physical `padding-left`, so matching
+// md3 sets bullet indent via physical `padding-left`, so matching
 // physical here produces a clean override. Flip to logical the day
-// BeerCSS flips.
+// md3 flips.
 @mixin no-space($sides...) {
   @if list.length($sides) == 0 {
     padding: 0 !important;
@@ -145,13 +145,26 @@ body {
 
 nav:is(.left, .right) {
   min-inline-size: var(--rail-width);
-  overflow-y: auto;
+  // No `overflow-y: auto` here — the rail's item count fits any viewport
+  // taller than ~25rem, and overflow:auto turns the rail into a clipping
+  // context that hides md3's `<menu>` popovers anchored from buttons
+  // inside it (the theme picker, specifically). If the rail ever grows
+  // past the viewport, prefer adding an inner scrollable wrapper to a
+  // single section rather than re-enabling rail-level clipping.
 
   // Align standalone buttons (e.g. theme toggle) with nav-item icons
   // only when the rail is expanded.
   &.max > button {
     margin-inline-start: 0.5rem;
   }
+}
+
+// Positioning context for md3's `<menu>` popover anchored to its sibling
+// button. Without an explicit positioning context here the menu falls
+// back to the rail/toolbar, anchoring at the rail's bottom-left instead
+// of next to the trigger.
+.theme-picker-anchor {
+  position: relative;
 }
 
 // -- Grid fix ----------------------------------------------------
@@ -161,17 +174,31 @@ nav:is(.left, .right) {
 }
 
 // -- Logo light/dark swap ----------------------------------------
+// md3 paints dark via `:root[data-mode="dark"]` and (for the `auto`
+// preference) `@media (prefers-color-scheme: dark) :root[data-mode="auto"]`.
+// It never adds a `dark` class to <body> — so the swap has to follow the
+// same selectors md3's own tokens do.
 
 .logo-dark {
   display: none;
 }
 
-body.dark .logo-light {
+:root[data-mode="dark"] .logo-light {
   display: none;
 }
 
-body.dark .logo-dark {
+:root[data-mode="dark"] .logo-dark {
   display: inline;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-mode="auto"] .logo-light {
+    display: none;
+  }
+
+  :root[data-mode="auto"] .logo-dark {
+    display: inline;
+  }
 }
 
 // -- Footer lists ------------------------------------------------
@@ -212,8 +239,8 @@ footer nav .grid > div {
   }
 }
 
-// -- Tooltip anchor (BeerCSS tooltip positioning context) --------
-// BeerCSS's `.tooltip` is absolute-positioned and looks up the nearest
+// -- Tooltip anchor (md3 tooltip positioning context) --------
+// md3's `.tooltip` is absolute-positioned and looks up the nearest
 // positioned ancestor for placement. The shared `applyRelativeTime`
 // helper appends a `.tooltip top` to bare <span>s next to relative-time
 // text — those spans default to `position: static`, which would let
@@ -227,7 +254,7 @@ footer nav .grid > div {
   position: relative;
 }
 
-// -- Reference links (suppress BeerCSS external-link icon) --------
+// -- Reference links (suppress md3 external-link icon) --------
 
 details.surface-variant a[target="_blank"]::after {
   content: none !important;
@@ -264,7 +291,7 @@ details.surface-variant a[target="_blank"] {
 }
 
 // -- Honor the [hidden] attribute over class-based display -------
-// BeerCSS sets `display: flex` on `.row` and similar layout
+// md3 sets `display: flex` on `.row` and similar layout
 // classes, which beats the user-agent stylesheet's
 // `[hidden] { display: none }` whenever both apply (matching
 // specificity, but class-based wins because it comes later).

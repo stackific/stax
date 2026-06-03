@@ -28,7 +28,7 @@ pre-commit:
     # frontend tree so auto-fixes land in the commit.
     frontend-fmt:
       glob: "frontend/**/*.{ts,tsx,html,scss,json}"
-      run: cd frontend && npm run lint:fix && cd .. && git add frontend
+      run: cd frontend && pnpm lint:fix && cd .. && git add frontend
 
 commit-msg:
   commands:
@@ -46,7 +46,7 @@ pre-push:
     # before the frontend is built and load-time package resolution dies
     # with "pattern all:frontend/dist: no matching files". On a fresh
     # clone the parallel `task X` invocations may each trigger
-    # `frontend:build`; npm run build is idempotent so the result is
+    # `frontend:build`; pnpm build is idempotent so the result is
     # correct (only wasteful, and only the first time).
     #
     # -race enables the data-race detector; -count=1 busts Go's test cache so
@@ -74,8 +74,8 @@ pre-push:
     govulncheck:
       run: task govulncheck
     # Frontend tree-wide checks — typecheck (tsc --noEmit) + lint (Biome) +
-    # dead-code (Knip). Composed in the `check` npm script. Glob gates the
+    # dead-code (Knip). Composed in the `check` pnpm script. Glob gates the
     # command on whether any frontend file is in the push diff.
     frontend-check:
       glob: "frontend/**/*.{ts,tsx,html,scss,json}"
-      run: cd frontend && npm run check
+      run: cd frontend && pnpm check

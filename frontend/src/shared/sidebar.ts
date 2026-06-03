@@ -1,8 +1,8 @@
 // Desktop sidebar (left rail) expand/collapse — width toggle + ARIA
 // state + persisted preference. Wired in once per page from
 // `bundle.ts`'s start() hook. Only the desktop rail (`nav.left.l`,
-// where `.l` is BeerCSS's "large breakpoint visible" marker) is
-// affected; the mobile drawer is a separate BeerCSS `<dialog>` driven
+// where `.l` is md3's "large breakpoint visible" marker) is
+// affected; the mobile drawer is a separate md3 `<dialog>` driven
 // by its own `data-ui` toggles in the markup.
 
 import { THEME } from "../constants";
@@ -23,7 +23,7 @@ function setExpanded(nav: HTMLElement, expanded: boolean): void {
   if (icon) icon.textContent = expanded ? "menu_open" : "menu";
 }
 
-// toggleSidebar is the click handler. BeerCSS's `.max` class on the
+// toggleSidebar is the click handler. md3's `.max` class on the
 // rail expands it to its full label width; toggling that class is the
 // entire visual flip. The new state is persisted to localStorage so
 // the user's last preference reapplies on the next page load.

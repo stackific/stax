@@ -1,4 +1,5 @@
-import "beercss/dist/cdn/beer.min.css";
+import "@stackific/md3";
+import "@stackific/md3/style";
 import "material-dynamic-colors";
 import "./styles/app.scss";
 
@@ -11,6 +12,7 @@ import { workItems } from "./pages/work-items";
 import { syncActiveNav } from "./shared/nav";
 import { initSidebar } from "./shared/sidebar";
 import { initTheme } from "./shared/theme";
+import { initThemePicker } from "./shared/theme-picker";
 
 const pages: Record<string, () => void | Promise<void>> = {
   home,
@@ -23,6 +25,7 @@ const pages: Record<string, () => void | Promise<void>> = {
 
 function start(): void {
   initTheme();
+  initThemePicker();
   initSidebar();
   syncActiveNav();
 

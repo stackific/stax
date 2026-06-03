@@ -1,4 +1,4 @@
-// applyStatusClass tints a status element with the BeerCSS color
+// applyStatusClass tints a status element with the md3 color
 // token that matches the work item's lifecycle stage so the /work-items,
 // /system, /work-item, and home pages all surface valid / superseded /
 // deprecated at a glance. The helper adapts to the element's current

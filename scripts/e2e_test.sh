@@ -508,13 +508,13 @@ case_start "build frontend (for //go:embed all:frontend/dist)"
 if [ "${FORCE_FRONTEND_BUILD:-}" = "1" ] || [ ! -d "$REPO_ROOT/frontend/dist" ]; then
   (
     cd "$REPO_ROOT/frontend"
-    # `npm ci` is skipped when node_modules already exists — it would
-    # otherwise wipe and reinstall on every run, which is multi-second
-    # overhead the dev cycle does not need.
+    # `pnpm install --frozen-lockfile` is skipped when node_modules
+    # already exists — it would otherwise wipe and reinstall on every
+    # run, which is multi-second overhead the dev cycle does not need.
     if [ ! -d node_modules ]; then
-      npm ci
+      pnpm install --frozen-lockfile
     fi
-    npm run build
+    pnpm build
   )
   assert_is_dir "frontend/dist built" "$REPO_ROOT/frontend/dist"
 else
