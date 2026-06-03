@@ -151,19 +151,16 @@ nav:is(.left, .right) {
   // inside it (the theme picker, specifically). If the rail ever grows
   // past the viewport, prefer adding an inner scrollable wrapper to a
   // single section rather than re-enabling rail-level clipping.
-
-  // Align standalone buttons (e.g. theme toggle) with nav-item icons
-  // only when the rail is expanded.
-  &.max > button {
-    margin-inline-start: 0.5rem;
-  }
 }
 
-// Positioning context for md3's `<menu>` popover anchored to its sibling
-// button. Without an explicit positioning context here the menu falls
-// back to the rail/toolbar, anchoring at the rail's bottom-left instead
-// of next to the trigger.
-.theme-picker-anchor {
+// Positioning context for md3's `<menu>` popover anchored to its
+// trigger. The wrapping `<div>` in header.html / mobile-nav.html
+// deliberately has no class so md3's nested nav-item selector
+// (`$-nav-item-nested` in _navigations.scss, `div:not([class])`) still
+// styles the inner `<a>` as a nav item. `:has(> menu)` picks only the
+// wrappers that own a menu, leaving spacer `<div class="max">` and
+// other classed divs alone.
+nav:is(.left, .right) > div:has(> menu) {
   position: relative;
 }
 
