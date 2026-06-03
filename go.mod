@@ -2,7 +2,7 @@ module github.com/stackific/stax
 
 go 1.26
 
-toolchain go1.26.3
+toolchain go1.26.4
 
 require (
 	github.com/charmbracelet/huh v1.0.0
