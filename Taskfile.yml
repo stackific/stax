@@ -11,10 +11,16 @@ tasks:
   # ---------- Setup ----------
 
   setup:
-    desc: Install git hooks and frontend dependencies
+    desc: Install git hooks, frontend dependencies, and the CodeQL CLI
     cmds:
       - lefthook install
       - test ! -d frontend || (cd frontend && pnpm install)
+      - task: setup:codeql
+
+  setup:codeql:
+    desc: Install the CodeQL CLI if missing (needed by the codeql-* pre-push hooks)
+    cmds:
+      - ./scripts/install-codeql.sh
 
   # ---------- Quality (delegated to lefthook) ----------
 

@@ -50,7 +50,7 @@ Common tasks (via [Task](https://taskfile.dev)):
 
 | Task            | What it does                                    |
 | --------------- | ----------------------------------------------- |
-| `task setup`    | Install git hooks from `lefthook.yml`.          |
+| `task setup`    | Install git hooks, frontend deps, and the CodeQL CLI. |
 | `task run`      | Run the CLI (`task run -- --version`).      |
 | `task build`    | Cross-compile macOS/Linux/Windows (amd64+arm64) into `./bin/`. |
 | `task prepush`  | Run every pre-push hook against all files.      |
@@ -61,11 +61,12 @@ The pre-push hooks run local [CodeQL](https://codeql.github.com/) scans
 (`codeql-go`, `codeql-js`, `codeql-python`) that mirror the
 [`codeql.yml`](.github/workflows/codeql.yml) CI workflow — the same
 `security-and-quality` query suite per language, run on your machine before
-push so findings never reach CI. They require the `codeql` CLI on your `PATH`:
+push so findings never reach CI. They require the `codeql` CLI on your `PATH` —
+`task setup` installs it for you (via Homebrew when available, otherwise the
+official bundle into `~/.codeql`). To install it on its own:
 
 ```bash
-brew install codeql   # macOS; or grab the bundle (ships the query packs) from
-                      # https://github.com/github/codeql-action/releases
+task setup:codeql     # or: brew install codeql
 ```
 
 Each scan is gated by a file glob, so only the languages in your push diff are

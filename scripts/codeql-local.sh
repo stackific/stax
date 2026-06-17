@@ -32,13 +32,14 @@ if ! command -v codeql >/dev/null 2>&1; then
   exit 1
 fi
 
-# Map the database language to its query-pack suite. The JS/TS database
-# language id is 'javascript-typescript', but the query pack is 'javascript' —
-# hence the explicit mapping rather than reusing $lang.
+# Map the database language to its fully-qualified query-pack suite. The CLI
+# needs the '<pack>:<suite-path>' form (the bare '<lang>-security-and-quality.qls'
+# shorthand only resolves inside the CodeQL Action). Note the JS/TS database
+# language id is 'javascript-typescript' but the query pack is 'javascript'.
 case "$lang" in
-  go)                    suite="go-security-and-quality.qls" ;;
-  python)                suite="python-security-and-quality.qls" ;;
-  javascript-typescript) suite="javascript-security-and-quality.qls" ;;
+  go)                    suite="codeql/go-queries:codeql-suites/go-security-and-quality.qls" ;;
+  python)                suite="codeql/python-queries:codeql-suites/python-security-and-quality.qls" ;;
+  javascript-typescript) suite="codeql/javascript-queries:codeql-suites/javascript-security-and-quality.qls" ;;
   *) echo "unsupported language: $lang" >&2; exit 1 ;;
 esac
 

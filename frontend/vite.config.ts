@@ -45,6 +45,38 @@ const renameBundle = (): PluginOption => ({
 // so the three other woff2 files are dead weight (~1.4 MB combined). This
 // plugin strips the dead @font-face blocks from bundle.css and deletes
 // the orphan woff2 files Vite emitted to dist/assets/. Build-only.
+// Strip the dead @font-face blocks for the unused Material Symbols variants
+// from bundle.css. Read-and-rewrite directly rather than existsSync-then-read
+// (the stat can race the file changing before use); a missing file is fine.
+const stripUnusedFontFaces = (cssPath: string, variants: readonly string[]): void => {
+  let css: string;
+  try {
+    css = readFileSync(cssPath, "utf8");
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return;
+    throw err;
+  }
+  for (const variant of variants) {
+    // @font-face blocks have no nested braces, so [^}]* is safe.
+    const block = new RegExp(`@font-face\\{[^}]*Material Symbols ${variant}[^}]*\\}`, "g");
+    css = css.replace(block, "");
+  }
+  writeFileSync(cssPath, css);
+};
+
+// Delete the orphan woff2 files for the unused variants. unlink directly and
+// ignore an already-removed file (avoids a TOCTOU check-then-delete).
+const removeUnusedWoff2 = (dist: string, variants: readonly string[]): void => {
+  for (const variant of variants) {
+    const p = resolve(dist, "assets", `material-symbols-${variant.toLowerCase()}.woff2`);
+    try {
+      unlinkSync(p);
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
+    }
+  }
+};
+
 const md3SymbolFonts = (): PluginOption => ({
   name: "stax-md3-symbol-fonts",
   apply: "build",
@@ -52,23 +84,8 @@ const md3SymbolFonts = (): PluginOption => ({
     const dist = resolve(root, "dist");
     if (!existsSync(dist)) return;
     const unusedVariants = ["Rounded", "Sharp", "Subset"] as const;
-
-    const cssPath = resolve(dist, "bundle.css");
-    if (existsSync(cssPath)) {
-      let css = readFileSync(cssPath, "utf8");
-      for (const variant of unusedVariants) {
-        // @font-face blocks have no nested braces, so [^}]* is safe.
-        const block = new RegExp(`@font-face\\{[^}]*Material Symbols ${variant}[^}]*\\}`, "g");
-        css = css.replace(block, "");
-      }
-      writeFileSync(cssPath, css);
-    }
-
-    for (const variant of unusedVariants) {
-      const file = `material-symbols-${variant.toLowerCase()}.woff2`;
-      const p = resolve(dist, "assets", file);
-      if (existsSync(p)) unlinkSync(p);
-    }
+    stripUnusedFontFaces(resolve(dist, "bundle.css"), unusedVariants);
+    removeUnusedWoff2(dist, unusedVariants);
   },
 });
 
