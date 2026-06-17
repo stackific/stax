@@ -79,3 +79,22 @@ pre-push:
     frontend-check:
       glob: "frontend/**/*.{ts,tsx,html,scss,json}"
       run: cd frontend && pnpm check
+    # Local CodeQL — the engine behind GitHub Advanced Security code scanning,
+    # run on this machine before push (no GitHub Actions, no Docker). Each
+    # command mirrors .github/workflows/codeql.yml: the same
+    # security-and-quality suite per language, so findings are caught locally
+    # before CI. Free here because the repo is public (CodeQL needs a GHAS
+    # license only for private code). Requires the `codeql` CLI on PATH. Globs
+    # gate each scan to the languages present in the push diff. The Go scan is
+    # slow: Go has no buildless mode, so the database build runs `task build`,
+    # which also produces frontend/dist for the //go:embed. See
+    # scripts/codeql-local.sh.
+    codeql-go:
+      glob: "*.go"
+      run: ./scripts/codeql-local.sh go . "task build"
+    codeql-js:
+      glob: "frontend/**/*.{ts,tsx,js,jsx,mjs,cjs}"
+      run: ./scripts/codeql-local.sh javascript-typescript frontend
+    codeql-python:
+      glob: "skills-evals/**/*.py"
+      run: ./scripts/codeql-local.sh python skills-evals

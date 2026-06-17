@@ -1,32 +1,85 @@
-name: CodeQL
+name: 'CodeQL Advanced'
 
 on:
   push:
-    branches: [main]
+    branches: ['main']
   pull_request:
-    branches: [main]
+    branches: ['main']
+  schedule:
+    - cron: '24 20 * * 5'
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
+      # required for all workflows
       security-events: write
-    strategy:
-      matrix:
-        language: [go]
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v5
+      # required to fetch internal or private CodeQL packs
+      packages: read
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: go
+            build-mode: autobuild
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
+        # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Pin Go to the version in go.mod so autobuild compiles with the toolchain
+      # the project actually targets, not whatever ships on the runner.
+      - name: Set up Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: false
 
-      - uses: github/codeql-action/init@v4
+      # The Go binary embeds frontend/dist via //go:embed all:frontend/dist
+      # (server.go). dist is gitignored, so CodeQL's Go autobuild — which runs
+      # `go build` — fails with "pattern all:frontend/dist: no matching files"
+      # on a fresh checkout. Build the frontend first so autobuild succeeds.
+      # Only the Go matrix entry needs this; JS/TS and Python do not build.
+      - name: Set up pnpm
+        if: matrix.language == 'go'
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+      - name: Set up Node
+        if: matrix.language == 'go'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Build frontend (produces frontend/dist for the Go embed)
+        if: matrix.language == 'go'
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-and-quality
 
-      - uses: github/codeql-action/autobuild@v4
-
-      - uses: github/codeql-action/analyze@v4
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: '/language:${{ matrix.language }}'

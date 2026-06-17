@@ -55,6 +55,26 @@ Common tasks (via [Task](https://taskfile.dev)):
 | `task build`    | Cross-compile macOS/Linux/Windows (amd64+arm64) into `./bin/`. |
 | `task prepush`  | Run every pre-push hook against all files.      |
 
+### Local CodeQL scans
+
+The pre-push hooks run local [CodeQL](https://codeql.github.com/) scans
+(`codeql-go`, `codeql-js`, `codeql-python`) that mirror the
+[`codeql.yml`](.github/workflows/codeql.yml) CI workflow — the same
+`security-and-quality` query suite per language, run on your machine before
+push so findings never reach CI. They require the `codeql` CLI on your `PATH`:
+
+```bash
+brew install codeql   # macOS; or grab the bundle (ships the query packs) from
+                      # https://github.com/github/codeql-action/releases
+```
+
+Each scan is gated by a file glob, so only the languages in your push diff are
+analyzed. The Go scan is the slowest: Go has no buildless extraction, so it
+builds the project (`task build`, which also produces `frontend/dist` for the
+`//go:embed`) to create the database. Run a single language on demand with
+[`scripts/codeql-local.sh`](scripts/codeql-local.sh), e.g.
+`scripts/codeql-local.sh python skills-evals`.
+
 See [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) for the contribution workflow (DCO sign-off and signed commits are required).
 
 ## What does `stax` mean?
