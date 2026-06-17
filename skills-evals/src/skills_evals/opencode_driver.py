@@ -130,13 +130,11 @@ CI_DIRECTIVE = (
 #   Model not found: deepseek/deepseek-v4-pro[1m]. Did you mean:
 #   deepseek-v4-pro, deepseek-v4-flash, deepseek-chat?
 
-# Env vars echoed at startup for CI-log clarity. Anything carrying a
-# secret reports as set/MISSING with a 4-char suffix, never the value.
+# Env vars echoed (non-secret) at startup for CI-log clarity.
 ECHOED_ENV_KEYS = (
   "OPENCODE_MODEL",
   "OPENCODE_PROVIDER",
 )
-SECRET_ENV_KEYS = ("DEEPSEEK_API_KEY",)
 
 
 @dataclass
@@ -427,12 +425,6 @@ def _log_startup(
 
   for key in ECHOED_ENV_KEYS:
     log("driver", f"env {key}={os.environ.get(key, '(unset)')}")
-  for key in SECRET_ENV_KEYS:
-    val = os.environ.get(key)
-    if val:
-      log("driver", f"env {key}=set (length={len(val)}, ...{val[-4:]})")
-    else:
-      log("driver", f"env {key}=MISSING")
 
 
 def _parse_event(line: str) -> dict:

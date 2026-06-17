@@ -55,9 +55,8 @@ CONFIRMATION_PATTERN = re.compile(r"reply\s+`?yes`?", re.IGNORECASE)
 DEFAULT_MAX_TURNS = 20
 DEFAULT_PER_TURN_TIMEOUT_S = 600.0
 
-# Claude Code env vars the driver echoes at startup so the CI log shows
-# exactly which backend the agent is routed to. Anything containing a
-# secret is reported as set/MISSING with a 4-char suffix, never the value.
+# Claude Code env vars the driver echoes (non-secret) at startup so the CI log
+# shows exactly which backend the agent is routed to.
 ECHOED_ENV_KEYS = (
   "ANTHROPIC_BASE_URL",
   "ANTHROPIC_MODEL",
@@ -67,7 +66,6 @@ ECHOED_ENV_KEYS = (
   "CLAUDE_CODE_SUBAGENT_MODEL",
   "CLAUDE_CODE_EFFORT_LEVEL",
 )
-SECRET_ENV_KEYS = ("ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY")
 
 
 @dataclass
@@ -285,12 +283,6 @@ def _log_startup(
 
   for key in ECHOED_ENV_KEYS:
     log("driver", f"env {key}={os.environ.get(key, '(unset)')}")
-  for key in SECRET_ENV_KEYS:
-    val = os.environ.get(key)
-    if val:
-      log("driver", f"env {key}=set (length={len(val)}, ...{val[-4:]})")
-    else:
-      log("driver", f"env {key}=MISSING")
 
 
 def _log_event(event: dict, idx: int) -> None:
@@ -350,7 +342,7 @@ def _summarize_event(event: dict) -> str:
         f"tools={len(event.get('tools', []) or [])} "
         f"mcp_servers={len(event.get('mcp_servers', []) or [])} "
         f"permissionMode={event.get('permissionMode')} "
-        f"apiKeySource={event.get('apiKeySource')}"
+        f"apiKeySource={'present' if event.get('apiKeySource') else 'none'}"
       )
     if subtype == "api_retry":
       return (

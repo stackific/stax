@@ -145,7 +145,7 @@ CI_DIRECTIVE = (
 _SLASH_RE = re.compile(r"^/(?P<skill>scope|ship)(?:\s+(?P<args>.*))?$", re.DOTALL)
 
 # Echoed at driver startup so CI logs show exactly which backend Copilot
-# is routed to. Non-secret values are printed in full; secrets are masked.
+# is routed to. Non-secret values only.
 ECHOED_ENV_KEYS = (
   "COPILOT_PROVIDER_TYPE",
   "COPILOT_PROVIDER_BASE_URL",
@@ -153,12 +153,6 @@ ECHOED_ENV_KEYS = (
   "COPILOT_PROVIDER_MAX_PROMPT_TOKENS",
   "COPILOT_PROVIDER_MAX_OUTPUT_TOKENS",
   "COPILOT_OFFLINE",
-)
-SECRET_ENV_KEYS = (
-  "COPILOT_PROVIDER_API_KEY",
-  "DEEPSEEK_API_KEY",
-  "COPILOT_GITHUB_TOKEN",
-  "GH_TOKEN",
 )
 
 
@@ -495,12 +489,6 @@ def _log_startup(
 
   for key in ECHOED_ENV_KEYS:
     log("driver", f"env {key}={os.environ.get(key, '(unset)')}")
-  for key in SECRET_ENV_KEYS:
-    val = os.environ.get(key)
-    if val:
-      log("driver", f"env {key}=set (length={len(val)}, ...{val[-4:]})")
-    else:
-      log("driver", f"env {key}=MISSING")
 
 
 def _pump_to_queue(stream: IO[str], q: queue.Queue[str | None]) -> None:

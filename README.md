@@ -50,10 +50,31 @@ Common tasks (via [Task](https://taskfile.dev)):
 
 | Task            | What it does                                    |
 | --------------- | ----------------------------------------------- |
-| `task setup`    | Install git hooks from `lefthook.yml`.          |
+| `task setup`    | Install git hooks, frontend deps, and the CodeQL CLI. |
 | `task run`      | Run the CLI (`task run -- --version`).      |
 | `task build`    | Cross-compile macOS/Linux/Windows (amd64+arm64) into `./bin/`. |
 | `task prepush`  | Run every pre-push hook against all files.      |
+
+### Local CodeQL scans
+
+The pre-push hooks run local [CodeQL](https://codeql.github.com/) scans
+(`codeql-go`, `codeql-js`, `codeql-python`) that mirror the
+[`codeql.yml`](.github/workflows/codeql.yml) CI workflow — the same
+`security-and-quality` query suite per language, run on your machine before
+push so findings never reach CI. They require the `codeql` CLI on your `PATH` —
+`task setup` installs it for you (via Homebrew when available, otherwise the
+official bundle into `~/.codeql`). To install it on its own:
+
+```bash
+task setup:codeql     # or: brew install codeql
+```
+
+Each scan is gated by a file glob, so only the languages in your push diff are
+analyzed. The Go scan is the slowest: Go has no buildless extraction, so it
+builds the project (`task build`, which also produces `frontend/dist` for the
+`//go:embed`) to create the database. Run a single language on demand with
+[`scripts/codeql-local.sh`](scripts/codeql-local.sh), e.g.
+`scripts/codeql-local.sh python skills-evals`.
 
 See [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) for the contribution workflow (DCO sign-off and signed commits are required).
 

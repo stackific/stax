@@ -204,10 +204,9 @@ def _load_dotenv_and_route_agent() -> None:
       "agent backend routed through DeepSeek.",
       pytrace=False,
     )
-  log(
-    "conftest",
-    f"DEEPSEEK_API_KEY: set (length={len(api_key)}, ...{api_key[-4:]})",
-  )
+  # Presence only — never the value or a substring (clear-text secret logging).
+  # api_key is guaranteed truthy here (the run aborts above when it is unset).
+  log("conftest", "DEEPSEEK_API_KEY: set")
 
   agent_key = _resolve_agent_key()
   log("conftest", f"active agent backend: {agent_key} (from STAX_AGENT_KEY)")
