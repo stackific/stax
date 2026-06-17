@@ -17,8 +17,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from skills_evals.claude_driver import DEFAULT_MAX_TURNS, drive_skill
 from skills_evals.judges import ArtifactJudge, WorkItemJudge
 

@@ -35,4 +35,5 @@ class Judge(ABC):
   name: str = "base"
 
   @abstractmethod
-  def evaluate(self, task: str, workspace: Path) -> Judgment: ...
+  def evaluate(self, task: str, workspace: Path) -> Judgment:
+    """Score `task`'s output under `workspace` and return a Judgment."""
