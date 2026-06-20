@@ -1,37 +1,37 @@
 {{#> layout title="Search" page="search" active="search" description="Stax — search across work items and systems."}}
   <section class="container py-l">
-    <h4 class="mb-m">Search</h4>
+    <h4 class="h4 mb-m">Search</h4>
     <div class="field label prefix border round mb-l">
-      <i>search</i>
+      <i class="icon">search</i>
       <input type="search" id="search-input" autocomplete="off" autofocus />
       <label>Search by title, system, or keyword</label>
     </div>
 
-    <p id="search-hint" class="center-align padding small-text">
+    <p id="search-hint" class="p center-align padding small-text">
       Type to search across work items and systems.
     </p>
 
     <section id="search-work-items-section" class="mb-l" hidden>
-      <h6 class="small mb-s">Work items</h6>
+      <h6 class="h6 small mb-s">Work items</h6>
       <div id="search-work-items" aria-live="polite"></div>
-      <p id="search-work-items-empty" class="small-text" hidden>No matching work items.</p>
+      <p id="search-work-items-empty" class="p small-text" hidden>No matching work items.</p>
     </section>
 
     <section id="search-systems-section" class="mb-l" hidden>
-      <h6 class="small mb-s">Systems</h6>
+      <h6 class="h6 small mb-s">Systems</h6>
       <div id="search-systems" aria-live="polite"></div>
-      <p id="search-systems-empty" class="small-text" hidden>No matching systems.</p>
+      <p id="search-systems-empty" class="p small-text" hidden>No matching systems.</p>
     </section>
 
-    <p id="search-empty-all" class="center-align padding small-text" hidden>
+    <p id="search-empty-all" class="p center-align padding small-text" hidden>
       No matches for that query.
     </p>
   </section>
 
   <template id="tpl-work-item">
     <a class="row padding round surface-variant wave no-elevate mb-s middle-align">
-      <i class="large" aria-hidden="true">flag</i>
-      <h6 class="small no-margin max ml-s" data-slot="title"></h6>
+      <i class="icon large" aria-hidden="true">flag</i>
+      <h6 class="h6 small no-margin max ml-s" data-slot="title"></h6>
       <div class="row wrap middle-align" data-slot="systems"></div>
       <div class="row middle-align small-text ml-s">
         <span data-slot="created"></span>
@@ -43,8 +43,8 @@
 
   <template id="tpl-system">
     <a class="row padding round surface-variant wave no-elevate mb-s middle-align">
-      <i class="large" aria-hidden="true">hub</i>
-      <h6 class="small no-margin ml-s" data-slot="name"></h6>
+      <i class="icon large" aria-hidden="true">hub</i>
+      <h6 class="h6 small no-margin ml-s" data-slot="name"></h6>
       <span class="small-text ml-m max truncate" data-slot="brief"></span>
       <span class="small-text ml-m" data-slot="count"></span>
     </a>
@@ -55,6 +55,6 @@
   </template>
 
   <template id="tpl-error">
-    <p class="small-text bold" data-slot="error"></p>
+    <p class="p small-text bold" data-slot="error"></p>
   </template>
 {{/layout}}

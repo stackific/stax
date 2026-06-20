@@ -1,38 +1,38 @@
-<nav class="top s m left-align" aria-label="Mobile navigation">
-  <button class="circle transparent" data-ui="#mobile-menu" aria-label="Open menu">
-    <i aria-hidden="true">menu</i>
+<nav class="nav top s m left-align" aria-label="Mobile navigation">
+  <button class="button circle transparent" data-ui="#mobile-menu" aria-label="Open menu">
+    <i class="icon" aria-hidden="true">menu</i>
   </button>
   <div class="max"></div>
   <div>
-    <button class="circle border" data-ui="#theme-picker-mobile" aria-label="Pick theme">
-      <i aria-hidden="true">style</i>
+    <button class="button circle border" data-ui="#theme-picker-mobile" aria-label="Pick theme">
+      <i class="icon" aria-hidden="true">style</i>
     </button>
-    <menu id="theme-picker-mobile" class="no-wrap left" data-theme-picker></menu>
+    <menu id="theme-picker-mobile" class="menu no-wrap left" data-theme-picker></menu>
   </div>
-  <button class="circle border" data-theme-toggle aria-label="Cycle appearance (auto, light, dark)">
-    <i aria-hidden="true">brightness_auto</i>
+  <button class="button circle border" data-theme-toggle aria-label="Cycle appearance (auto, light, dark)">
+    <i class="icon" aria-hidden="true">brightness_auto</i>
   </button>
 </nav>
 
-<dialog id="mobile-menu" class="left no-padding" aria-label="Navigation drawer">
-  <nav class="left max surface-container" aria-label="Navigation menu">
-    <header>
-      <button class="circle extra transparent" data-ui="#mobile-menu" aria-label="Close menu">
-        <i aria-hidden="true">menu_open</i>
+<dialog id="mobile-menu" class="dialog left no-padding" aria-label="Navigation drawer">
+  <nav class="nav left max surface-container" aria-label="Navigation menu">
+    <header class="header">
+      <button class="button circle extra transparent" data-ui="#mobile-menu" aria-label="Close menu">
+        <i class="icon" aria-hidden="true">menu_open</i>
       </button>
     </header>
     <a href="/" data-nav-link data-active-key="home" onclick="ui('#mobile-menu')">
-      <i aria-hidden="true">home</i><span class="fw-5">Home</span>
+      <i class="icon" aria-hidden="true">home</i><span class="fw-5">Home</span>
     </a>
     <a href="/work-items" data-nav-link data-active-key="work-items" onclick="ui('#mobile-menu')">
-      <i aria-hidden="true">flag</i><span class="fw-5">Work items</span>
+      <i class="icon" aria-hidden="true">flag</i><span class="fw-5">Work items</span>
     </a>
     <a href="/systems" data-nav-link data-active-key="systems" onclick="ui('#mobile-menu')">
-      <i aria-hidden="true">hub</i><span class="fw-5">Systems</span>
+      <i class="icon" aria-hidden="true">hub</i><span class="fw-5">Systems</span>
     </a>
     <div class="max"></div>
     <a href="/search" data-nav-link data-active-key="search" onclick="ui('#mobile-menu')">
-      <i aria-hidden="true">search</i><span class="fw-5">Search</span>
+      <i class="icon" aria-hidden="true">search</i><span class="fw-5">Search</span>
     </a>
   </nav>
 </dialog>
