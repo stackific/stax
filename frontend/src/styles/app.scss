@@ -143,7 +143,7 @@ body {
 
 // -- Nav rail ----------------------------------------------------
 
-nav:is(.left, .right) {
+.nav:is(.left, .right) {
   min-inline-size: var(--rail-width);
   // No `overflow-y: auto` here — the rail's item count fits any viewport
   // taller than ~25rem, and overflow:auto turns the rail into a clipping
@@ -153,14 +153,13 @@ nav:is(.left, .right) {
   // single section rather than re-enabling rail-level clipping.
 }
 
-// Positioning context for md3's `<menu>` popover anchored to its
-// trigger. The wrapping `<div>` in header.html / mobile-nav.html
-// deliberately has no class so md3's nested nav-item selector
-// (`$-nav-item-nested` in _navigations.scss, `div:not([class])`) still
-// styles the inner `<a>` as a nav item. `:has(> menu)` picks only the
-// wrappers that own a menu, leaving spacer `<div class="max">` and
-// other classed divs alone.
-nav:is(.left, .right) > div:has(> menu) {
+// Positioning context for md3's `.menu` popover anchored to its trigger.
+// The wrapping `<div>` in header.html / mobile-nav.html deliberately has no
+// class so md3 2.0.0's nested nav-item selector (the `div:not([class])` arm of
+// `.nav:is(.left,.right,.top,.bottom) > … > a:not(.button,.chip)`) still styles
+// the inner `<a>` as a nav item. `:has(> .menu)` picks only the wrappers that
+// own a menu, leaving spacer `<div class="max">` and other classed divs alone.
+.nav:is(.left, .right) > div:has(> .menu) {
   position: relative;
 }
 
@@ -200,25 +199,25 @@ nav:is(.left, .right) > div:has(> menu) {
 
 // -- Footer lists ------------------------------------------------
 
-footer ul {
+.footer ul {
   list-style: none !important;
   @include no-space;
 }
 
-footer li {
+.footer li {
   @include no-space(left);
 }
 
-footer li::before {
+.footer li::before {
   content: none !important;
 }
 
-footer nav {
+.footer nav {
   display: block !important;
   @include space(mt, m);
 }
 
-footer nav .grid > div {
+.footer nav .grid > div {
   @include space(mb, m);
 }
 

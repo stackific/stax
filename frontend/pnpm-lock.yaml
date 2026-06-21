@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@stackific/md3':
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: ^2.0.0
+        version: 2.0.0
       material-dynamic-colors:
         specifier: ^1.1.4
         version: 1.1.4
@@ -520,8 +520,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@stackific/md3@0.1.2':
-    resolution: {integrity: sha512-l1m7+0mzmNE9t7a8NDH3Ef67BGfw9PL7qTjAhnYs+hL4/+5cw58m6+cNfdtt1zBcnliYYhedYeuy5HWL978pAg==}
+  '@stackific/md3@2.0.0':
+    resolution: {integrity: sha512-6GZJto8OGyi/jYRUXjoMIp9ao0etuzj7hWK3vawdN72/YSq2ATLJgA26/PLIwghqPhilIZpnVFJ5ujOXQfQ3+Q==}
     engines: {node: '>=20'}
 
   '@tybys/wasm-util@0.10.2':
@@ -1153,7 +1153,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@stackific/md3@0.1.2': {}
+  '@stackific/md3@2.0.0': {}
 
   '@tybys/wasm-util@0.10.2':
     dependencies:

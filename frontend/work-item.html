@@ -2,8 +2,8 @@
   <section class="container py-l">
     <a href="/work-items" class="link small-text mb-m">&larr; All work items</a>
     <div class="row middle-align mb-m">
-      <i class="large mr-s" id="work-item-icon" aria-hidden="true">flag</i>
-      <h4 id="work-item-title" class="max no-margin">Loading…</h4>
+      <i class="icon large mr-s" id="work-item-icon" aria-hidden="true">flag</i>
+      <h4 id="work-item-title" class="h4 max no-margin">Loading…</h4>
     </div>
     <div class="row middle-align mb-m wrap">
       <span class="chip small no-elevate mr-t" id="work-item-status" hidden></span>
@@ -17,8 +17,8 @@
       <div class="row wrap" id="work-item-superseded-by"></div>
     </div>
 
-    <article id="work-item-body" class="work-item-body padding round surface-variant px-l py-l" aria-live="polite">
-      <p class="small-text">Loading work-item body…</p>
+    <article id="work-item-body" class="card work-item-body padding round surface-variant px-l py-l" aria-live="polite">
+      <p class="p small-text">Loading work-item body…</p>
     </article>
   </section>
 
@@ -31,6 +31,6 @@
   </template>
 
   <template id="tpl-error">
-    <p class="small-text bold" data-slot="error"></p>
+    <p class="p small-text bold" data-slot="error"></p>
   </template>
 {{/layout}}
