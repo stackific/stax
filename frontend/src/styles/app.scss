@@ -272,6 +272,20 @@ details.surface-variant a[target="_blank"] {
 // their default disc bullets.
 
 .work-item-body {
+  // md3 2.0.0 styles links only through `.link` (which just recolors) and
+  // gives every bare <a> `display: inline-flex` + no underline via the
+  // zero-specificity `:where(a)` base — layout meant for buttons/chips, not
+  // links inside running prose. The rendered markdown body can't carry the
+  // `.link` class (it's goldmark output; see src/pages/work-item.ts), so
+  // restore the prose convention — inline flow, underline, primary color —
+  // scoped to the body. Specificity (0,2,0) beats `:where(a)` (0,0,0) without
+  // `!important`. Mirrors the details.surface-variant link override above.
+  a {
+    display: inline;
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
   li:has(> input[type="checkbox"]) {
     list-style: none;
     margin-inline-start: -1.25rem;
