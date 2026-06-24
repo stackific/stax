@@ -272,17 +272,45 @@ details.surface-variant a[target="_blank"] {
 // their default disc bullets.
 
 .work-item-body {
+  // md3 2.0.0 styles links only through `.link` (which just recolors) and
+  // gives every bare <a> `display: inline-flex` + no underline via the
+  // zero-specificity `:where(a)` base — layout meant for buttons/chips, not
+  // links inside running prose. The rendered markdown body can't carry the
+  // `.link` class (it's goldmark output; see src/pages/work-item.ts), so
+  // restore the prose convention — inline flow, underline, primary color —
+  // scoped to the body. Specificity (0,2,0) beats `:where(a)` (0,0,0) without
+  // `!important`. Mirrors the details.surface-variant link override above.
+  a {
+    display: inline;
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  // Inline code (md3's .code) must hug the text line. md3's .code uses full
+  // padding (.25rem all round), which lifts the chip's box above the baseline
+  // so it reads as a floating block in prose. Drop the block padding so the
+  // highlight sits on the line; keep horizontal padding for breathing room.
+  code.code {
+    padding-block: 0;
+    padding-inline: 0.25rem;
+    vertical-align: baseline;
+  }
+
+  // Task lists: goldmark renders `- [ ]` as
+  //   <li><input type="checkbox" disabled> text…</li>
+  // in a plain <ul> (no GitHub `task-list-item` class). Suppress the bullet and
+  // lay the checkbox inline before the text. Do NOT use display:flex here —
+  // flex promotes every inline node in the item (text runs, inline code, links)
+  // to its own flex item and shatters the line. A plain list item with an
+  // inline checkbox lets the text and its inline code flow naturally.
   li:has(> input[type="checkbox"]) {
     list-style: none;
     margin-inline-start: -1.25rem;
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
   }
 
   li > input[type="checkbox"] {
-    margin: 0;
-    flex-shrink: 0;
+    margin: 0 var(--space-s) 0 0;
+    vertical-align: middle;
   }
 }
 
